@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package onboarding;
+
+service OnboardingService {
+    rpc Start (StartRequest) returns (StartResponse);
+    rpc Execute (ExecuteRequest) returns (ExecuteResponse);
+}
+
+message StartRequest {
+}
+
+message StartResponse {
+    string instanceId = 1;
+}
+
+message ExecuteRequest {
+    string instanceId = 1;
+}
+
+message ExecuteResponse {
+    string instanceId = 1;
+    string nextStep = 2;
+}
