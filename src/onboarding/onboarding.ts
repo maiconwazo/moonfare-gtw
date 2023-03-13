@@ -35,7 +35,7 @@ export const ONBOARDING_PACKAGE_NAME = "onboarding";
 export interface OnboardingServiceClient {
   start(request: Empty, metadata?: Metadata): Observable<OnboardingResponse>;
 
-  resume(request: OnboardingRequest, metadata?: Metadata): Observable<OnboardingResponse>;
+  resume(request: Empty, metadata?: Metadata): Observable<OnboardingResponse>;
 
   execute(request: OnboardingRequest, metadata?: Metadata): Observable<OnboardingResponse>;
 
@@ -49,7 +49,7 @@ export interface OnboardingServiceController {
   ): Promise<OnboardingResponse> | Observable<OnboardingResponse> | OnboardingResponse;
 
   resume(
-    request: OnboardingRequest,
+    request: Empty,
     metadata?: Metadata,
   ): Promise<OnboardingResponse> | Observable<OnboardingResponse> | OnboardingResponse;
 

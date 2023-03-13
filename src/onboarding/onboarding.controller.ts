@@ -4,7 +4,6 @@ import {
   Inject,
   Post,
   Put,
-  Get,
   Body,
   Delete,
   Res,
@@ -33,7 +32,7 @@ export class OnboardingController {
       client.getService<OnboardingServiceClient>('OnboardingService');
   }
 
-  @Get('resume')
+  @Post()
   async resume(
     @Req() req,
     @Res({ passthrough: true }) res,
@@ -46,29 +45,9 @@ export class OnboardingController {
 
     try {
       const result = await firstValueFrom<OnboardingResponse>(
-        this.onboardingService.resume(
-          {
-            input: {},
-          },
-          metadata,
-        ),
-      );
-
-      return new OnboardingResponseViewModel(result.data, null);
-    } catch (err) {
-      res.statusCode = 500;
-      return new OnboardingResponseViewModel(null, err);
-    }
-  }
-
-  @Post('start')
-  async start(
-    @Body() body: OnboardingRequestViewModel,
-    @Res({ passthrough: true }) res,
-  ): Promise<OnboardingResponseViewModel> {
-    try {
-      const result = await firstValueFrom<OnboardingResponse>(
-        this.onboardingService.start({}),
+        instanceId
+          ? this.onboardingService.resume({}, metadata)
+          : this.onboardingService.start({}),
       );
 
       res.cookie(

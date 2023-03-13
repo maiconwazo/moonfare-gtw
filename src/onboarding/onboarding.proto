@@ -6,7 +6,7 @@ import "google/protobuf/empty.proto";
 
 service OnboardingService {
     rpc Start (google.protobuf.Empty) returns (OnboardingResponse);
-    rpc Resume (OnboardingRequest) returns (OnboardingResponse);
+    rpc Resume (google.protobuf.Empty) returns (OnboardingResponse);
     rpc Execute (OnboardingRequest) returns (OnboardingResponse);
     rpc Delete (google.protobuf.Empty) returns (OnboardingResponse);
 }
