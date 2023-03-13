@@ -2,23 +2,35 @@ syntax = "proto3";
 
 package onboarding;
 
+import "google/protobuf/empty.proto";
+
 service OnboardingService {
-    rpc Start (StartRequest) returns (StartResponse);
-    rpc Execute (ExecuteRequest) returns (ExecuteResponse);
+    rpc Start (google.protobuf.Empty) returns (OnboardingResponse);
+    rpc Resume (OnboardingRequest) returns (OnboardingResponse);
+    rpc Execute (OnboardingRequest) returns (OnboardingResponse);
+    rpc Delete (google.protobuf.Empty) returns (OnboardingResponse);
 }
 
-message StartRequest {
+message Input {
 }
 
-message StartResponse {
-    string instanceId = 1;
+message OnboardingRequest {
+    Input input = 1;
 }
 
-message ExecuteRequest {
-    string instanceId = 1;
+message Data {
+    string currentStep = 1;
+    bool isCompleted = 2;
 }
 
-message ExecuteResponse {
-    string instanceId = 1;
-    string nextStep = 2;
+message OnboardingResponse {
+    bool success = 1;
+    Error error = 2;
+    Data data = 3;
+    string instanceId = 4;
+}
+
+message Error{
+    string code = 1;
+    string message = 2;
 }
