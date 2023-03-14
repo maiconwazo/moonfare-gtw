@@ -9,6 +9,7 @@ service OnboardingService {
     rpc Resume (google.protobuf.Empty) returns (OnboardingResponse);
     rpc Execute (OnboardingRequest) returns (OnboardingResponse);
     rpc Delete (google.protobuf.Empty) returns (OnboardingResponse);
+    rpc GetInformation(google.protobuf.Empty) returns (OnboardingInformationResponse);
 }
 
 message Input {
@@ -19,8 +20,13 @@ message OnboardingRequest {
 }
 
 message Data {
-    string currentStep = 1;
+    StepInformation currentStep = 1;
     bool isCompleted = 2;
+}
+
+message StepInformation {
+    string name = 1;
+    int32 order = 2;
 }
 
 message OnboardingResponse {
@@ -33,4 +39,14 @@ message OnboardingResponse {
 message Error{
     string code = 1;
     string message = 2;
+}
+
+message OnboardingInformation {
+    int32 totalStepCount = 1;
+}
+
+message OnboardingInformationResponse {
+    bool success = 1;
+    Error error = 2;
+    OnboardingInformation data = 3;
 }

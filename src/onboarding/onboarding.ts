@@ -14,8 +14,13 @@ export interface OnboardingRequest {
 }
 
 export interface Data {
-  currentStep: string;
+  currentStep: StepInformation | undefined;
   isCompleted: boolean;
+}
+
+export interface StepInformation {
+  name: string;
+  order: number;
 }
 
 export interface OnboardingResponse {
@@ -30,6 +35,16 @@ export interface Error {
   message: string;
 }
 
+export interface OnboardingInformation {
+  totalStepCount: number;
+}
+
+export interface OnboardingInformationResponse {
+  success: boolean;
+  error: Error | undefined;
+  data: OnboardingInformation | undefined;
+}
+
 export const ONBOARDING_PACKAGE_NAME = "onboarding";
 
 export interface OnboardingServiceClient {
@@ -40,6 +55,8 @@ export interface OnboardingServiceClient {
   execute(request: OnboardingRequest, metadata?: Metadata): Observable<OnboardingResponse>;
 
   delete(request: Empty, metadata?: Metadata): Observable<OnboardingResponse>;
+
+  getInformation(request: Empty, metadata?: Metadata): Observable<OnboardingInformationResponse>;
 }
 
 export interface OnboardingServiceController {
@@ -62,11 +79,16 @@ export interface OnboardingServiceController {
     request: Empty,
     metadata?: Metadata,
   ): Promise<OnboardingResponse> | Observable<OnboardingResponse> | OnboardingResponse;
+
+  getInformation(
+    request: Empty,
+    metadata?: Metadata,
+  ): Promise<OnboardingInformationResponse> | Observable<OnboardingInformationResponse> | OnboardingInformationResponse;
 }
 
 export function OnboardingServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["start", "resume", "execute", "delete"];
+    const grpcMethods: string[] = ["start", "resume", "execute", "delete", "getInformation"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("OnboardingService", method)(constructor.prototype[method], method, descriptor);

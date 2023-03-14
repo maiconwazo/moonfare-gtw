@@ -8,10 +8,15 @@ import {
   Delete,
   Res,
   Req,
+  Get,
 } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices/interfaces';
 import { firstValueFrom } from 'rxjs';
-import { OnboardingResponse, OnboardingServiceClient } from './onboarding';
+import {
+  OnboardingInformationResponse,
+  OnboardingResponse,
+  OnboardingServiceClient,
+} from './onboarding';
 import { OnboardingRequestViewModel } from './view-models/onboarding-request.viewmodel';
 import { OnboardingResponseViewModel } from './view-models/onboarding-response.viewmodel';
 
@@ -20,7 +25,7 @@ export class OnboardingController {
   private onboardingService: OnboardingServiceClient;
   private instanceIdCookieOpts = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: process.env.NODE_ENV === 'development' ? false : true,
     sameSite: 'none',
     path: '/',
     maxAge: 60 * 60 * 24 * 3,
@@ -32,8 +37,25 @@ export class OnboardingController {
       client.getService<OnboardingServiceClient>('OnboardingService');
   }
 
-  @Post()
-  async resume(
+  @Get('getInformation')
+  async getInformation(
+    @Req() req,
+    @Res({ passthrough: true }) res,
+  ): Promise<OnboardingResponseViewModel> {
+    try {
+      const result = await firstValueFrom<OnboardingInformationResponse>(
+        this.onboardingService.getInformation({}),
+      );
+
+      return new OnboardingResponseViewModel(result.data, null);
+    } catch (err) {
+      res.statusCode = 500;
+      return new OnboardingResponseViewModel(null, err);
+    }
+  }
+
+  @Post('start')
+  async start(
     @Req() req,
     @Res({ passthrough: true }) res,
   ): Promise<OnboardingResponseViewModel> {
