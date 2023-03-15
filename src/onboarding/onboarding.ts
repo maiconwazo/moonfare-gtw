@@ -6,11 +6,8 @@ import { Empty } from "./google/protobuf/empty";
 
 export const protobufPackage = "onboarding";
 
-export interface Input {
-}
-
 export interface OnboardingRequest {
-  input: Input | undefined;
+  input: string;
 }
 
 export interface Data {

@@ -3,9 +3,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { join } from 'path';
 import { OnboardingController } from './onboarding.controller';
+import { OnboardingService } from './onboarding.service';
 
 @Module({
   controllers: [OnboardingController],
+  providers: [OnboardingService],
   imports: [
     ClientsModule.registerAsync([
       {

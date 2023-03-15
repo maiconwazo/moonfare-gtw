@@ -12,11 +12,8 @@ service OnboardingService {
     rpc GetInformation(google.protobuf.Empty) returns (OnboardingInformationResponse);
 }
 
-message Input {
-}
-
 message OnboardingRequest {
-    Input input = 1;
+    string input = 1;
 }
 
 message Data {

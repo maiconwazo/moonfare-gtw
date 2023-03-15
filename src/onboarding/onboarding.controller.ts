@@ -1,7 +1,6 @@
 import { Metadata } from '@grpc/grpc-js';
 import {
   Controller,
-  Inject,
   Post,
   Put,
   Body,
@@ -10,19 +9,11 @@ import {
   Req,
   Get,
 } from '@nestjs/common';
-import { ClientGrpc } from '@nestjs/microservices/interfaces';
-import { firstValueFrom } from 'rxjs';
-import {
-  OnboardingInformationResponse,
-  OnboardingResponse,
-  OnboardingServiceClient,
-} from './onboarding';
-import { OnboardingRequestViewModel } from './view-models/onboarding-request.viewmodel';
+import { OnboardingService } from './onboarding.service';
 import { OnboardingResponseViewModel } from './view-models/onboarding-response.viewmodel';
 
 @Controller('onboarding')
 export class OnboardingController {
-  private onboardingService: OnboardingServiceClient;
   private instanceIdCookieOpts = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'development' ? false : true,
@@ -32,20 +23,14 @@ export class OnboardingController {
   };
   private static onboardingInstanceIdCookieKey = 'onboarding_instance_id';
 
-  constructor(@Inject('ONBOARDING_PKG') client: ClientGrpc) {
-    this.onboardingService =
-      client.getService<OnboardingServiceClient>('OnboardingService');
-  }
+  constructor(private onboardingService: OnboardingService) {}
 
   @Get('getInformation')
   async getInformation(
-    @Req() req,
     @Res({ passthrough: true }) res,
   ): Promise<OnboardingResponseViewModel> {
     try {
-      const result = await firstValueFrom<OnboardingInformationResponse>(
-        this.onboardingService.getInformation({}),
-      );
+      const result = await this.onboardingService.getFlowInformationAsync();
 
       return new OnboardingResponseViewModel(result.data, null);
     } catch (err) {
@@ -66,11 +51,7 @@ export class OnboardingController {
     metadata.add('instanceId', instanceId);
 
     try {
-      const result = await firstValueFrom<OnboardingResponse>(
-        instanceId
-          ? this.onboardingService.resume({}, metadata)
-          : this.onboardingService.start({}),
-      );
+      const result = await this.onboardingService.startRequestAsync(instanceId);
 
       res.cookie(
         OnboardingController.onboardingInstanceIdCookieKey,
@@ -87,24 +68,17 @@ export class OnboardingController {
 
   @Put('execute')
   async execute(
-    @Body() body: OnboardingRequestViewModel,
+    @Body() body: any,
     @Req() req,
     @Res({ passthrough: true }) res,
   ): Promise<OnboardingResponseViewModel> {
     const instanceId =
       req.cookies[OnboardingController.onboardingInstanceIdCookieKey];
 
-    const metadata = new Metadata();
-    metadata.add('instanceId', instanceId);
-
     try {
-      const result = await firstValueFrom<OnboardingResponse>(
-        this.onboardingService.execute(
-          {
-            input: {},
-          },
-          metadata,
-        ),
+      const result = await this.onboardingService.executeRequestAsync(
+        instanceId,
+        body,
       );
 
       return new OnboardingResponseViewModel(result.data, null);
@@ -122,12 +96,9 @@ export class OnboardingController {
     const instanceId =
       req.cookies[OnboardingController.onboardingInstanceIdCookieKey];
 
-    const metadata = new Metadata();
-    metadata.add('instanceId', instanceId);
-
     try {
-      const result = await firstValueFrom<OnboardingResponse>(
-        this.onboardingService.delete({}, metadata),
+      const result = await this.onboardingService.deleteRequestAsync(
+        instanceId,
       );
 
       return new OnboardingResponseViewModel(result.data, null);
