@@ -52,6 +52,8 @@ export interface OnboardingServiceClient {
 
   execute(request: OnboardingRequest, metadata?: Metadata): Observable<OnboardingResponse>;
 
+  rollback(request: Empty, metadata?: Metadata): Observable<OnboardingResponse>;
+
   delete(request: Empty, metadata?: Metadata): Observable<OnboardingResponse>;
 
   getInformation(request: Empty, metadata?: Metadata): Observable<OnboardingInformationResponse>;
@@ -73,6 +75,11 @@ export interface OnboardingServiceController {
     metadata?: Metadata,
   ): Promise<OnboardingResponse> | Observable<OnboardingResponse> | OnboardingResponse;
 
+  rollback(
+    request: Empty,
+    metadata?: Metadata,
+  ): Promise<OnboardingResponse> | Observable<OnboardingResponse> | OnboardingResponse;
+
   delete(
     request: Empty,
     metadata?: Metadata,
@@ -86,7 +93,7 @@ export interface OnboardingServiceController {
 
 export function OnboardingServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["start", "resume", "execute", "delete", "getInformation"];
+    const grpcMethods: string[] = ["start", "resume", "execute", "rollback", "delete", "getInformation"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("OnboardingService", method)(constructor.prototype[method], method, descriptor);

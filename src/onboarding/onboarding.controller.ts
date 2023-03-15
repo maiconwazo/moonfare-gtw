@@ -94,6 +94,24 @@ export class OnboardingController {
     }
   }
 
+  @Post('rollback')
+  async rollback(
+    @Req() req,
+    @Res({ passthrough: true }) res,
+  ): Promise<OnboardingResponseViewModel> {
+    const instanceId =
+      req.cookies[OnboardingController.onboardingInstanceIdCookieKey];
+
+    try {
+      const result = await this.onboardingService.rollbackAsync(instanceId);
+
+      return new OnboardingResponseViewModel(result.data, null);
+    } catch (err) {
+      res.statusCode = 500;
+      return new OnboardingResponseViewModel(null, err);
+    }
+  }
+
   @Delete('delete')
   async delete(
     @Req() req,

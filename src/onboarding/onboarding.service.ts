@@ -64,6 +64,15 @@ export class OnboardingService {
     );
   }
 
+  public async rollbackAsync(instanceId: string): Promise<OnboardingResponse> {
+    const metadata = new Metadata();
+    metadata.add('instanceId', instanceId);
+
+    return await firstValueFrom<OnboardingResponse>(
+      this.onboardingService.rollback({}, metadata),
+    );
+  }
+
   public async deleteRequestAsync(
     instanceId: string,
   ): Promise<OnboardingResponse> {
