@@ -24,6 +24,7 @@ message Data {
 message StepInformation {
     string name = 1;
     int32 order = 2;
+    string status = 3;
 }
 
 message OnboardingResponse {

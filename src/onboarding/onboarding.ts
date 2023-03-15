@@ -18,6 +18,7 @@ export interface Data {
 export interface StepInformation {
   name: string;
   order: number;
+  status: string;
 }
 
 export interface OnboardingResponse {

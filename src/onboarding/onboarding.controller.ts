@@ -8,7 +8,10 @@ import {
   Res,
   Req,
   Get,
+  UploadedFiles,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { OnboardingService } from './onboarding.service';
 import { OnboardingResponseViewModel } from './view-models/onboarding-response.viewmodel';
 
@@ -67,8 +70,10 @@ export class OnboardingController {
   }
 
   @Put('execute')
+  @UseInterceptors(FilesInterceptor('file'))
   async execute(
     @Body() body: any,
+    @UploadedFiles() files: Array<Express.Multer.File>,
     @Req() req,
     @Res({ passthrough: true }) res,
   ): Promise<OnboardingResponseViewModel> {
@@ -79,6 +84,7 @@ export class OnboardingController {
       const result = await this.onboardingService.executeRequestAsync(
         instanceId,
         body,
+        files,
       );
 
       return new OnboardingResponseViewModel(result.data, null);
