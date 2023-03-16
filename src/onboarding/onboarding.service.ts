@@ -92,7 +92,7 @@ export class OnboardingService {
       const file = files[0];
       const ext = extname(file.originalname);
 
-      const tempFolder = join(__dirname, 'temp');
+      const tempFolder = './temp';
       if (!existsSync(tempFolder)) mkdirSync(tempFolder);
 
       const fileName = `${v4()}${ext}`;
